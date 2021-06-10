@@ -1,5 +1,6 @@
 <template>
   <div class="canvas">
+    <h1>Hello sudoku</h1>
     <canvas id="canvas"></canvas>
   </div>
 </template>
