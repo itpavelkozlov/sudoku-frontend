@@ -1,6 +1,6 @@
 <template>
   <div class="canvas">
-    <h1>Hello sudoku</h1>
+    <h1>Hello sudoku {{ currentSelection }}</h1>
     <canvas id="canvas"></canvas>
   </div>
 </template>
@@ -10,7 +10,7 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      currentSelection: [0, 0],
+      currentSelection: null,
       ctx: null,
       canvas: null,
     };
@@ -47,66 +47,67 @@ export default {
         posY += 50;
       }
     },
-    onCanvasClick(e) {
+    fillRect() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.drawBasicLayout(this.ctx);
 
+      if (this.currentSelection != null) {
+        this.ctx.fillStyle = "rgba(0,200,0,0.5)";
+        this.ctx.fillRect(
+          this.currentSelection[0],
+          this.currentSelection[1],
+          50,
+          50
+        );
+        this.ctx.fillStyle = "rgba(0,0,0,1)";
+      }
+    },
+    onCanvasClick(e) {
       if (
-        this.currentSelection != [0, 0] &&
+        this.currentSelection !== null &&
         e.offsetY - (e.offsetY % 50) === this.currentSelection[1] &&
         e.offsetX - (e.offsetX % 50) === this.currentSelection[0]
       ) {
-        this.currentSelection = [0, 0];
+        this.currentSelection = null;
+        this.fillRect()
         return;
       }
-
-      this.currentSelection[0] = e.offsetX - (e.offsetX % 50);
-      this.currentSelection[1] = e.offsetY - (e.offsetY % 50);
-
-      this.ctx.fillStyle = "rgba(0,200,0,0.5)";
-      this.ctx.fillRect(
-        this.currentSelection[0],
-        this.currentSelection[1],
-        50,
-        50
-      );
-      this.ctx.fillStyle = "rgba(0,0,0,1)";
+      this.currentSelection = [
+        e.offsetX - (e.offsetX % 50),
+        e.offsetY - (e.offsetY % 50),
+      ];
+      this.fillRect();
     },
     onCanvasKeydown(e) {
-      if (this.currentSelection != [0, 0]) {
+      if (this.currentSelection != null) {
         switch (e.keyCode) {
           case 39:
-            console.log("down");
-            e.offsetX = this.currentSelection[0] + 50;
-            if (e.offsetX + 50 > 450) {
-              e.offsetX = 0;
+            this.currentSelection[0] += 50;
+            if (this.currentSelection[0] + 50 > 450) {
+              this.currentSelection[0] = 0;
             }
-            e.offsetY = this.currentSelection[1];
-            this.onCanvasClick(e);
+            this.fillRect();
             break;
           case 37:
-            e.offsetX = this.currentSelection[0] - 50;
-            if (e.offsetX < 0) {
-              e.offsetX = 400;
+            this.currentSelection[0] -= 50;
+            if (this.currentSelection[0] < 0) {
+              this.currentSelection[0] = 400;
             }
-            e.offsetY = this.currentSelection[1];
-            this.onCanvasClick(e);
+            this.fillRect();
             break;
           case 38:
-            e.offsetY = this.currentSelection[1] - 50;
-            if (e.offsetY < 0) {
-              e.offsetY = 400;
+            this.currentSelection[1] -= 50;
+            if (this.currentSelection[1] < 0) {
+              this.currentSelection[1] = 400;
             }
-            e.offsetX = this.currentSelection[0];
-            this.onCanvasClick(e);
+            this.fillRect();
             break;
           case 40:
-            e.offsetY = this.currentSelection[1] + 50;
-            if (e.offsetY + 50 > 450) {
-              e.offsetY = 0;
+            this.currentSelection[1] += 50;
+            if (this.currentSelection[1] + 50 > 450) {
+              this.currentSelection[1] = 0;
             }
-            e.offsetX = this.currentSelection[0];
-            this.onCanvasClick(e);
+            this.fillRect();
             break;
           case 48:
           case 49:

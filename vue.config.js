@@ -1,3 +1,5 @@
 module.exports = {
-    publicPath:'/sudoku-frontend/dist/'
+    publicPath: process.env.NODE_ENV === 'production'
+    ? '/sudoku-frontend/dist/'
+    : '/'
   }
