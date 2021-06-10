@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="application/javascript">
+
+        let currentSelection = [0, 0]
+
+        function drawBasicLayout(ctx) {
+            let posX = 5
+            let posY = 5
+
+            for (var i = 0; i < 9; i++) {
+                for (var j = 0; j < 9; j++) {
+
+                    if (i % 3 === 0 && j % 3 === 0) {
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "#000000";
+                        ctx.strokeRect(posX, posY, 50 * 3, 50 * 3);
+                        ctx.font = "48px serif";
+                        ctx.fillText(i + 1, posX + 14, posY + 42);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+                    }
+                    ctx.strokeRect(posX, posY, 50, 50);
+                    posX += 50
+                }
+                posX = 5
+                posY += 50
+            }
+        }
+
+        function onCanvasClick(e, ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBasicLayout(ctx)
+
+            if (currentSelection[0] != 0 && currentSelection[1] != 0 && e.offsetY - e.offsetY % 50 + 5 === currentSelection[1] && e.offsetX - e.offsetX % 50 + 5 === currentSelection[0]) {
+                currentSelection = [0, 0]
+                return
+            }
+
+            currentSelection[0] = e.offsetX - e.offsetX % 50 + 5
+            currentSelection[1] = e.offsetY - e.offsetY % 50 + 5
+
+            ctx.lineWidth = 5;
+            ctx.fillStyle = "rgba(0,200,0,0.5)";
+
+            ctx.fillRect(currentSelection[0], currentSelection[1], 50, 50);
+
+            ctx.lineWidth = 1;
+            ctx.fillStyle = "rgba(0,0,0,1)";
+        }
+
+        function draw() {
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            canvas.tabIndex = 1;
+            canvas.style.outline = "none";
+
+            canvas.width = 50 * 9 + 10
+            canvas.height = 50 * 9 + 10
+
+            drawBasicLayout(ctx)
+            canvas.addEventListener('click', function (e) { onCanvasClick(e, ctx) }, false)
+
+            canvas.addEventListener('keydown', function (e) {
+                if (currentSelection[0] != 0 && currentSelection[1] != 0) {
+                    console.log(e.keyCode)
+                    switch (e.keyCode) {
+                        case 39:
+                            e.offsetX = currentSelection[0] + 50;
+                            if (currentSelection[0] + 50 > 450) {
+                                e.offsetX = 0
+                            }
+                            e.offsetY = currentSelection[1];
+                            onCanvasClick(e, ctx)
+                            break
+                        case 37:
+                            e.offsetX = currentSelection[0] - 50;
+                            if (currentSelection[0] - 50 < 0) {
+                                e.offsetX = 400
+                            }
+                            e.offsetY = currentSelection[1];
+                            onCanvasClick(e, ctx)
+                            break
+                        case 38:
+                            e.offsetY = currentSelection[1] - 50;
+                            if (currentSelection[1] - 50 < 0) {
+                                e.offsetY = 400
+                            }
+                            e.offsetX = currentSelection[0];
+                            onCanvasClick(e, ctx)
+                            break
+                        case 40:
+                            e.offsetY = currentSelection[1] + 50;
+                            if (currentSelection[1] + 50 > 450) {
+                                e.offsetY = 0
+                            }
+                            e.offsetX = currentSelection[0];
+                            onCanvasClick(e, ctx)
+                            break
+                        case 48:
+                        case 49:
+                        case 50:
+                        case 51:
+                        case 52:
+                        case 53:
+                        case 54:
+                        case 55:
+                        case 56:
+                        case 57:
+                            console.log(e.key)
+                    }
+                }
+            }, false);
+        }
+    </script>
+</head>
+
+<body onload="draw();">
+    <div class="canvas">
+        <canvas id="canvas"></canvas>
+    </div>
+</body>
+
+<style>
+    html,
+    body {
+        overflow: hidden;
+    }
+</style>
+
+</html>
