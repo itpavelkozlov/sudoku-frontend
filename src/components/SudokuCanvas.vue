@@ -13,6 +13,17 @@ export default {
       currentSelection: null,
       ctx: null,
       canvas: null,
+      sudoku: [
+        [1, "*", "*", 4, 5, 6, 7, 8, 9],
+        [1, "*", 3, "*", 5, 6, "*", "*", 9],
+        [1, 2, 3, 4, 5, 6, 7, 8, "*"],
+        ["*", 2, "*", 4, 5, 6, 7, 8, "*"],
+        ["*", "*", "*", 4, 5, 6, 7, 8, 9],
+        [1, 2, 3, 4, 5, "*", 7, 8, 9],
+        [1, 2, "*", 4, "*", 6, "*", 8, 9],
+        [1, 2, 3, 4, 5, "*", "*", "*", 9],
+        ["*", 2, "*", "*", 5, 6, 7, 8, "*"],
+      ],
     };
   },
   mounted() {
@@ -28,6 +39,16 @@ export default {
     this.drawBasicLayout();
   },
   methods: {
+    drawAllNms(){
+      for (var x = 0; x < this.sudoku.length; x++) {
+        for (var y = 0; y < this.sudoku[x].length; y++) {
+          if (this.sudoku[x][y] !== "*"){
+
+          this.drawNumber(y * 50, x * 50, this.sudoku[x][y]);
+          }
+        }
+      }
+    },
     drawBasicLayout() {
       let posX = 0;
       let posY = 0;
@@ -36,8 +57,6 @@ export default {
           if (i % 3 === 0 && j % 3 === 0) {
             this.ctx.strokeStyle = "#000000";
             this.ctx.strokeRect(posX, posY, 50 * 3, 50 * 3);
-            this.ctx.font = "48px serif";
-            this.ctx.fillText(i + 1, posX + 14, posY + 42);
             this.ctx.strokeStyle = "rgba(0,0,0,0.2)";
           }
           this.ctx.strokeRect(posX, posY, 50, 50);
@@ -45,7 +64,12 @@ export default {
         }
         posX = 0;
         posY += 50;
+        this.drawAllNms()
       }
+    },
+    drawNumber(posX, posY, n) {
+      this.ctx.font = "36pt Courier";
+      this.ctx.fillText(n, posX + 14, posY + 42);
     },
     fillRect() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -69,7 +93,7 @@ export default {
         e.offsetX - (e.offsetX % 50) === this.currentSelection[0]
       ) {
         this.currentSelection = null;
-        this.fillRect()
+        this.fillRect();
         return;
       }
       this.currentSelection = [
